@@ -1,0 +1,3 @@
+https://static.tezign.com/slot-plugin-demo/pureFn
+https://static.tezign.com/slot-plugin-demo/iframe/index.html
+https://static.tezign.com/slot-plugin-demo/render
