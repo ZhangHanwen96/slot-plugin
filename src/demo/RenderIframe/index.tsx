@@ -15,7 +15,7 @@ const RenderIframe = () => {
     return (
         <div style={{
             width: '100vw',
-            height: '80vh'
+            height: '40vh'
         }}>
             <button
                 onClick={() => {

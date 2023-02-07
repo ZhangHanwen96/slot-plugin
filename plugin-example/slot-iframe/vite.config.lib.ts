@@ -6,10 +6,8 @@ export default defineConfig({
   build: {
     lib: {
         entry: 'src/pureFn/index.ts',
-        // name: 'pureFn',
         fileName: 'index',
         formats: ['es'],
     },
-    // outDir: 'pureFn'
   }
 })

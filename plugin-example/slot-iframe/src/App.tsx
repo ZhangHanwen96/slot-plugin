@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import reactLogoRaw from "./assets/react.svg?raw";
 
@@ -31,7 +31,6 @@ const iframeEventAdapter = (name: string) => {
   window.addEventListener('message', (e) => {
       if(!e.data || !e.data.event || !e.data.to) return;
       if(e.data.to === name) {
-        console.log(e.data)
           pubsub.notify(e.data.event, e.data.data);
       }
   })
@@ -44,7 +43,7 @@ const iframeEventAdapter = (name: string) => {
 };
 
 
-const adptor = iframeEventAdapter(slotName);
+const eventAdaptor = iframeEventAdapter(slotName);
 
 
 function App() {
@@ -55,8 +54,8 @@ function App() {
         const isIframe = window.self !== window.top;
 
         if (isIframe) {
-            adptor.dispatchEvent('ready')
-            adptor.addEventListener('props', setData)    
+            eventAdaptor.dispatchEvent('ready')
+            eventAdaptor.addEventListener('props', setData)    
         }
 
     }, []);

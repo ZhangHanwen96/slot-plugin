@@ -3,6 +3,7 @@ import React, {
     CSSProperties,
     useState,
     useCallback,
+    FC,
 } from "react";
 import { useUpdateEffect } from "ahooks";
 import dataCenter from "../utils/dataCenter";
@@ -10,18 +11,23 @@ import { usePluginConfig } from "./PluginProvider";
 
 const noop = () => {};
 
-const IframeSlotRender = ({
+
+interface IframeRenderProps {
+    name: string;
+    iframeSrc: string;
+    $props?: any;
+    style?: CSSProperties;
+}
+/**
+ * 
+ * @description render iframe with given src
+ */
+export const IframeRender: FC<IframeRenderProps> = ({
     $props,
     style = { height: "100%", width: "100%", border: "none" },
     name,
-}: {
-    name: string;
-    $props?: any;
-    style?: CSSProperties;
+    iframeSrc
 }) => {
-    const iframeSrc = usePluginConfig({
-        pluginName: name,
-    });
     const [iframe, setIframe] = useState<HTMLIFrameElement>();
     const iframeRef = React.useRef<HTMLIFrameElement>(null);
 
@@ -86,5 +92,18 @@ const IframeSlotRender = ({
         />
     ) : null;
 };
+
+/**
+ * 
+ * @description Wrapper around 'IframeRender' to get iframeSrc from plugin config
+ */
+const IframeSlotRender: FC<Omit<IframeRenderProps, 'iframeSrc'>> = (props) => {
+    const iframeSrc = usePluginConfig({
+        pluginName: props.name,
+    });
+    
+    return iframeSrc ? <IframeRender iframeSrc={iframeSrc} {...props} /> : null;
+};
+
 
 export default IframeSlotRender;

@@ -31,7 +31,7 @@ interface WCSlotRendererProps {
     /**
      * Custom resource wrapper to fetch the slot content and work with suspense
      */
-    // slotResource?: SlotResource | null;
+    slotResource?: SlotResource | null;
     children: React.ReactNode;
     /**
      * The tag name of the custom element
@@ -43,15 +43,13 @@ interface WCSlotRendererProps {
     $props: { [key: string]: any };
 }
 
-const WCSlotRenderer: FC<WCSlotRendererProps & WebComponentProps> = ({
+const WebComponentRenderer: FC<WCSlotRendererProps & WebComponentProps> = ({
     $props,
-    // slotResource,
+    slotResource,
     CustomElementName,
     children,
     ...rest
 }) => {
-    const slotResource = useSlotResource(CustomElementName);
-    console.log(slotResource, 'slotResource')
     const wcRef = useRef<HTMLElement | null>(null);
 
 
@@ -129,6 +127,12 @@ const WCSlotRenderer: FC<WCSlotRendererProps & WebComponentProps> = ({
             )}
         </>
     );
+};
+
+const WCSlotRenderer: FC<Omit<WCSlotRendererProps, 'slotResource'> & WebComponentProps> = (props) => {
+    const slotResource = useSlotResource(props.CustomElementName);
+
+    return <WebComponentRenderer {...props} slotResource={slotResource} />
 };
 
 function useSlotResource(pluginName: string) {

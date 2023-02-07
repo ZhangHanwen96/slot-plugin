@@ -6,7 +6,7 @@ import React, {
     useRef,
     useState,
 } from "react";
-import { pluginCtx } from "./ctx";
+import { pluginCtx, RouterConfig } from "./ctx";
 import Pubsub from "../utils/store";
 import { isDevMode } from "../utils/isDevMode";
 
@@ -31,6 +31,9 @@ const setupHMR = () => {
 
 setupHMR();
 
+
+
+let hasInitialized = false;
 const PluginProvider: FC<{children: React.ReactNode}> = ({children}) => {
     const [config, setConfig] = useState<Record<string, string>>({});
     const configRef = useRef(config);
@@ -40,6 +43,17 @@ const PluginProvider: FC<{children: React.ReactNode}> = ({children}) => {
     const getConfig = useCallback((name: string) => {
         return configRef.current[name];
     }, []);
+
+    const [routerConfig, setRouterConfig] = useState<Record<string, RouterConfig>>({} as any);
+
+    const addRouter = useCallback((config: RouterConfig) => {
+        setRouterConfig((prev) => {
+            return {
+                ...prev,
+                [config.linkName]: config
+            }
+        });
+    }, [])
 
     useEffect(() => {
         // // fetch config
@@ -58,8 +72,20 @@ const PluginProvider: FC<{children: React.ReactNode}> = ({children}) => {
             "slot-render-demo": 'https://static.tezign.com/slot-plugin-demo/render/index.js',
             "slot-iframe-demo": 'https://static.tezign.com/slot-plugin-demo/iframe/index.html',
             "slot-pure-fn-demo": 'https://static.tezign.com/slot-plugin-demo/pureFn/index.js',
+            'entry': 'https://static.tezign.com/slot-plugin-demo/entry/index.js'
         }
         const c = cdn_config;
+        if(c.entry) {
+            const init = async () => {
+                if(hasInitialized) return;
+                hasInitialized = true;
+                const module = await import(c.entry);
+                if(typeof module.default === 'function') {
+                    module.default({addRouter});
+                }
+            }
+            init();
+        }
         setConfig(c);
         pubsub.notify('slot-render-demo', c["slot-render-demo"]);
         pubsub.notify('slot-iframe-demo', c["slot-iframe-demo"]);
@@ -71,6 +97,8 @@ const PluginProvider: FC<{children: React.ReactNode}> = ({children}) => {
             value={{
                 pubsub,
                 getConfig,
+                routerConfig,
+                addRouter,
             }}
         >{children}</pluginCtx.Provider>
     );

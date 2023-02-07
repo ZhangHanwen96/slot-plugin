@@ -1,13 +1,21 @@
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link,
+    Prompt,
+} from "react-router-dom";
 import RenderSlotDemo from "./demo/RenderSlot";
 import RenderIframeDemo from "./demo/RenderIframe";
 import PureFnSlotDemo from "./demo/PureFnSlot";
 import PluginProvider from "./components/PluginProvider";
+import { RouterSlot } from "./components/RouterSlot";
 import "./App.css";
 
-function App() {
+const Home = () => {
     return (
-        <PluginProvider>
+        <>
             <PureFnSlotDemo />
             <div
                 style={{
@@ -25,6 +33,33 @@ function App() {
                     <RenderSlotDemo />
                 </div>
             </div>
+        </>
+    );
+};
+
+function App() {
+    return (
+        <PluginProvider>
+            <Router>
+                <ul>
+                    <li>
+                        <Link to="/">Home</Link>
+                    </li>
+                    <RouterSlot.Link />
+                </ul>
+
+                <Suspense fallback={<div>loading......</div>}>
+                    <Switch>
+                        <Route path="/" exact children={<Home />} />
+                        <Route path='/plugin'>
+                            <Switch>
+                                <RouterSlot />
+                            </Switch>
+                        
+                        </Route>
+                    </Switch>
+                </Suspense>
+            </Router>
         </PluginProvider>
     );
 }

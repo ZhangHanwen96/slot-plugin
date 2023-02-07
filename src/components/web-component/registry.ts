@@ -1,5 +1,5 @@
 import { FC } from "react";
-import type { ReactifiedComponent, ReactifiedProps } from "./reactify";
+import type { ReactifiedProps } from "./reactify";
 
 export type CustomComponentNames = "portal-card";
 

@@ -1,3 +1,4 @@
+
 type Callback = (...args: any[]) => void;
 export default class Pubsub {
     protected _subscriptions = {} as Record<string, Callback[]>;

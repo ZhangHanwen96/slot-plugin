@@ -7,6 +7,7 @@ import path from "path";
 // pureFn
 // iframe
 // render
+// entry
 const slotType = process.argv[2];
 
 const execa = util.promisify(exec);

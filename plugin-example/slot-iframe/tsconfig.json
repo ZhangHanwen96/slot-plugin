@@ -16,6 +16,6 @@
         "noEmit": true,
         "jsx": "react-jsx"
     },
-    "include": ["src", "upload_cdn.mjs"],
+    "include": ["src", "upload_cdn.mjs", "types"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }
