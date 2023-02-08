@@ -8,7 +8,6 @@ import { createElement } from "@/components/web-component/createElement";
 import { WebComponentProps } from "@/components/web-component/inteface";
 import { reactify } from "@/components/web-component/reactify";
 import {
-    CustomComponentNames,
     ReactifiedComponentRegistry,
 } from "@/components/web-component/registry";
 import { errorBoundaryRegistery } from "@/components/ErrorBoundary";
@@ -40,7 +39,7 @@ interface WCSlotRendererProps {
     /**
      * The tag name of the custom element
      */
-    CustomElementName: CustomComponentNames;
+    CustomElementName: string;
     /**
      * Will be passed to the custom element as render props
      */
@@ -56,7 +55,7 @@ export const WebComponentRenderer: FC<WCSlotRendererProps & WebComponentProps> =
 }) => {
     const wcRef = useRef<HTMLElement | null>(null);
 
-    let CustomElementNameWithId: CustomComponentNames;
+    let CustomElementNameWithId: string;
     if (slotResource) {
         let result;
         // if(errorBoundaryRegistery.get(CustomElementName)?.shouldRetry !== false) {
@@ -69,8 +68,8 @@ export const WebComponentRenderer: FC<WCSlotRendererProps & WebComponentProps> =
             const ReactComponent = result.Component;
 
             CustomElementNameWithId = wcUid && isDevMode()
-                ? (`${CustomElementName}-${wcUid}` as CustomComponentNames)
-                : (CustomElementName as CustomComponentNames);
+                ? (`${CustomElementName}-${wcUid}` as string)
+                : (CustomElementName as string);
 
             console.log("CustomElementNameWithId", CustomElementNameWithId);
 

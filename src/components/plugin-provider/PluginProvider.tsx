@@ -50,32 +50,42 @@ const PluginProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
 
         // make sure url exists
         const filteredData = data.filter((e) => e.config && e.config.url).map((config) => {
+            // skip entry
+            if(config.pluginName === 'entry') return config;
+            
             const {config: {pluginType, url}} = config;
             let fixedPluginType = pluginType;
+            let mixed = false;
+            // guess plugin type if not provided
             if(!pluginType) {
                 if(url.endsWith('.html')) {
                     fixedPluginType =  'iframe';
                 };
+                // could be both component and function
                 if(/m?js/.test(url)) {
-                    fixedPluginType = 'component'
+                    mixed = true;
                 };
             }
-            // fix possible wrong type
+            // fix type if doesn't match with file extension
             if(url.endsWith('.html') && pluginType !== 'iframe') {
-                fixedPluginType='iframe'
+                fixedPluginType = 'iframe'
             }
+            // could be both component and function
             if(pluginType === 'iframe' && /m?js/.test(url)) {
-                fixedPluginType = 'component'
+                // fixedPluginType = 'component'
+                mixed = true;
             }
-            
-            return {
+
+            const genConfig = (type: PluginType) => ({
                 ...config,
                 config: {
                     ...config.config,
-                    pluginType: fixedPluginType,
+                    pluginType: type,
                 }
-            }
-        });
+            })
+            
+            return mixed ? [genConfig('component'), genConfig('function') ]  : genConfig(fixedPluginType)
+        }).flat();
 
 
         filteredData.forEach(({ config, pluginName }) => {

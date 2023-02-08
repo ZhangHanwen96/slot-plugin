@@ -21,7 +21,9 @@ const importCss =  (path: string): PluginOption => {
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [
-        react(),
+        react({
+            jsxRuntime: 'classic'
+        }),
         cssInject(),
         // importCss('')
     ],
@@ -37,7 +39,7 @@ export default defineConfig({
         },
         rollupOptions: {
             output: {
-                manualChunks: splitVendorChunk(),
+                // manualChunks: splitVendorChunk(),
                 assetFileNames: '[name]-[hash].[ext]',  
             },
 

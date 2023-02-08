@@ -28,7 +28,7 @@ export default class ErrorBoundary extends React.PureComponent<IProps, IState> {
     }
 
     componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
-        console.log('error caught by error boundary')
+        console.log('error caught by error boundary', error, errorInfo)
         // const {shouldRetry = true, name} = this.props
         // if(!shouldRetry) {
         //     return

@@ -8,7 +8,11 @@ const PureFnSlot = () => {
     const runFn = useMemoizedFn(async () => {
         window.alert("before running fn");
         if (fn) {
-            await fn();
+           try {
+              await fn();
+           } catch (error) {
+            
+           }
         }
         window.alert("after running fn");
     });

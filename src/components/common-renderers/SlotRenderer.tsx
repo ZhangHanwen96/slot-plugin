@@ -8,6 +8,9 @@ interface Props {
   $props?: any;
 }
 
+/**
+ * @description
+ */
 const SlotRenderer: FC<Props> = ({pluginName, $props}) => {
     const config = usePluginConfig({ pluginName: pluginName });
     if (!config) {
