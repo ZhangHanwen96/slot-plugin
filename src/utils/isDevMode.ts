@@ -1,1 +1,1 @@
-export const isDevMode = () => location.search.includes("pluginDevMode");
+export const isDevMode = () => import.meta.env.DEV;

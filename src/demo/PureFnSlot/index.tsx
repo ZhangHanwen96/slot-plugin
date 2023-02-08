@@ -1,6 +1,6 @@
 import React from "react";
 import { useMemoizedFn } from "ahooks";
-import { usePureFnSlot } from "@/components/usePureFnSlot";
+import { usePureFnSlot } from "@/components/base-renderers/usePureFn";
 
 const PureFnSlot = () => {
     const fn = usePureFnSlot("slot-pure-fn-demo");

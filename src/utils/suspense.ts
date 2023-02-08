@@ -2,11 +2,13 @@ import { isDevMode } from "./isDevMode";
 
 const cleanUrl = (url: string) => url.replace(/(\?.*|#.*)/, '');
 
+/**
+ * @description same as native import, used to suppress vite warning.
+ */
 const dynamicImport = (src: string) => {
-  return Function('dynamicImport', `"use strict";return import('${src}')`)()
+  return Function('src', `"use strict"; return import(src);`)(src)
 }
 
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 export function fetchRenderSource(url: string) {
     const urlObj = new URL(url);
     // script src, provider 会注入t ?
@@ -14,25 +16,21 @@ export function fetchRenderSource(url: string) {
     // clean url
     const cleanedUrl = cleanUrl(url);
 
-    const load = async () => {
-        return import(
-          // add ?import for vite dev server
-          /* @vite-ignore */
-          isDevMode() && t ? `${cleanedUrl}?import&uid=${t}` : url
-        );
-    }
-    let scriptPromise = load();
+    let modulePromise = dynamicImport(isDevMode() && t ? `${cleanedUrl}?import&uid=${t}` : url)
 
     return {
         url: cleanedUrl,
-        module: wrapPromise(scriptPromise),
+        module: wrapPromise(modulePromise),
+        /**
+         * dev use only
+         */
         uuid: t
     }
 }
 
-export function wrapPromise(promise: Promise<any>) {
+export function wrapPromise<T = any>(promise: Promise<T>) {
     let status = "pending";
-    let result: any;
+    let result: T;
     let suspender = promise.then(
       r => {
         status = "success";

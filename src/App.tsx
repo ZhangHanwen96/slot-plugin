@@ -1,16 +1,15 @@
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import {
     BrowserRouter as Router,
     Switch,
     Route,
     Link,
-    Prompt,
 } from "react-router-dom";
 import RenderSlotDemo from "./demo/RenderSlot";
 import RenderIframeDemo from "./demo/RenderIframe";
 import PureFnSlotDemo from "./demo/PureFnSlot";
-import PluginProvider from "./components/PluginProvider";
-import { RouterSlot } from "./components/RouterSlot";
+import PluginProvider from "./components/plugin-provider/PluginProvider";
+import { RouterSlot } from "./components/common-renderers/RouterSlot";
 import "./App.css";
 
 const Home = () => {

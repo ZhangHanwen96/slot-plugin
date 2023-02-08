@@ -6,8 +6,8 @@ import React, {
     FC,
 } from "react";
 import { useUpdateEffect } from "ahooks";
-import dataCenter from "../utils/dataCenter";
-import { usePluginConfig } from "./PluginProvider";
+import dataCenter from "@/utils/dataCenter";
+import { usePluginConfig } from "@/components/plugin-provider/PluginProvider";
 
 const noop = () => {};
 
@@ -98,11 +98,12 @@ export const IframeRender: FC<IframeRenderProps> = ({
  * @description Wrapper around 'IframeRender' to get iframeSrc from plugin config
  */
 const IframeSlotRender: FC<Omit<IframeRenderProps, 'iframeSrc'>> = (props) => {
-    const iframeSrc = usePluginConfig({
+    const config = usePluginConfig({
         pluginName: props.name,
+        pluginType: 'iframe',
     });
     
-    return iframeSrc ? <IframeRender iframeSrc={iframeSrc} {...props} /> : null;
+    return config ? <IframeRender iframeSrc={config.url} {...props} /> : null;
 };
 
 

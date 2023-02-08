@@ -28,29 +28,30 @@ export default class ErrorBoundary extends React.PureComponent<IProps, IState> {
     }
 
     componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
-        const {shouldRetry = true, name} = this.props
-        if(!shouldRetry) {
-            return
-        }
-        if(!name) {
-            console.error('should provide a name for error boundary', error, errorInfo)
-            return;
-        }
-        if(errorBoundaryRegistery.get(name)?.shouldRetry === false) {
-            console.error('exceed maximum retry times', error, errorInfo)
-            return;
-        }
-        let retry = errorRetryMap.get(name) || 2;
-        errorRetryMap.set(name, --retry);
-        if(retry >= 0) {
-            // if something goes wrong, keep trying util hits the retry limit
-            // 如果plugin一直出错的话就放弃渲染
-            setTimeout(() => {
-                this.setState({ error: null, render: 0 })
-            }, 2000)
-        } else {
-            errorBoundaryRegistery.set(name, { shouldRetry: false })
-        }
+        console.log('error caught by error boundary')
+        // const {shouldRetry = true, name} = this.props
+        // if(!shouldRetry) {
+        //     return
+        // }
+        // if(!name) {
+        //     console.error('should provide a name for error boundary', error, errorInfo)
+        //     return;
+        // }
+        // if(errorBoundaryRegistery.get(name)?.shouldRetry === false) {
+        //     console.error('exceed maximum retry times', error, errorInfo)
+        //     return;
+        // }
+        // let retry = errorRetryMap.get(name) || 2;
+        // errorRetryMap.set(name, --retry);
+        // if(retry >= 0) {
+        //     // if something goes wrong, keep trying util hits the retry limit
+        //     // 如果plugin一直出错的话就放弃渲染
+        //     setTimeout(() => {
+        //         this.setState({ error: null, render: 0 })
+        //     }, 2000)
+        // } else {
+        //     errorBoundaryRegistery.set(name, { shouldRetry: false })
+        // }
     }
 
     static getDerivedStateFromProps(preProps: IProps, prevState: IState) {

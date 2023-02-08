@@ -1,5 +1,5 @@
 import React from "react";
-import IframeSlot from "@/components/IframeSlot";
+import IframeSlot from "@/components/base-renderers/IframeRenderer";
 import Suspense from "@/components/Suspense";
 import ErrorThrower from "@/components/ErrorThrower";
 import Pubsub from "@/utils/store";

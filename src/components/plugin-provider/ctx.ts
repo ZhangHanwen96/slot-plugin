@@ -1,5 +1,6 @@
 import { createContext } from "react";
-import Pubsub from "../utils/store";
+import Pubsub from "@/utils/store";
+import { PluginConfig } from "@/interface";
 
 type IframeType = { url: string };
 type ComponentType = {
@@ -16,10 +17,10 @@ export type RouterConfig = { linkName: string; to: string } & (
 );
 
 interface PluginContext {
-    pubsub: Pubsub;
-    getConfig: (name: string) => string;
+    configStore: Pubsub & { addRouter: (config: RouterConfig) => void } & {
+        getConfig: (name: string) => PluginConfig | undefined;
+    };
     routerConfig: Record<string, RouterConfig>;
-    addRouter: (config: RouterConfig) => void;
 }
 
 const pluginCtx = createContext<PluginContext>({} as PluginContext);

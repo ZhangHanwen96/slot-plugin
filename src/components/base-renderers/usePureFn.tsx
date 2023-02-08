@@ -1,10 +1,11 @@
-import React, { useEffect, useReducer, useRef, useState } from "react";
+import React, { useEffect, useReducer, useRef } from "react";
 import {useMemoizedFn} from 'ahooks'
-import { usePluginConfig } from "./PluginProvider";
+import { usePluginConfig } from "@/components/plugin-provider/PluginProvider";
 
 export function usePureFnSlot<T extends any = void>(name: string): () => Promise<T> {
-    const scriptSrc = usePluginConfig({
+    const config = usePluginConfig({
         pluginName: name,
+        pluginType: 'function'
     });
     const fnRef = useRef<Function>();
     const [_, forceUpdate] = useReducer((x) => x + 1, 0);
@@ -18,11 +19,11 @@ export function usePureFnSlot<T extends any = void>(name: string): () => Promise
     })
 
     useEffect(() => {
-        if (!scriptSrc) return;
+        if (!config) return;
         const curCount = ++countRef.current;
         const loadPluginModule = async () => {
             try {
-                const { default: _default } = await import(scriptSrc);
+                const { default: _default } = await import(config.url);
                 if (curCount !== countRef.current) return;
                 if (typeof _default === "function") {
                     fnRef.current = _default;
@@ -33,7 +34,7 @@ export function usePureFnSlot<T extends any = void>(name: string): () => Promise
             }
         };
         loadPluginModule();
-    }, [scriptSrc]);
+    }, [config]);
 
     return memoizedFn as any;
 };

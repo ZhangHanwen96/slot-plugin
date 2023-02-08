@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import SlotRenderer from "@/components/RenderSlot";
+import SlotRenderer from "@/components/base-renderers/ComponentRenderer";
 import Suspense from "@/components/Suspense";
 
 const DefaultComponent = () => {
@@ -42,6 +42,7 @@ const RenderSlot = () => {
                         }
                     >
                       <DefaultComponent  />
+                      
                     </SlotRenderer>
                     
                 </Suspense>

@@ -27,7 +27,7 @@ export default defineConfig({
     ],
     build: {
         lib: {
-            entry: "src/entry/index.tsx",
+            entry: "src/entry/Component.tsx",
             fileName: "index",
             formats: ["es"],
         },
@@ -41,7 +41,7 @@ export default defineConfig({
                 assetFileNames: '[name]-[hash].[ext]',  
             },
 
-            // external: ['react', 'react-dom']
+            external: ['react', 'react-dom']
         },
         emptyOutDir: true,
     },

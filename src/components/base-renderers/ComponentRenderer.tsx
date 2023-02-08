@@ -1,18 +1,19 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import {render} from 'react-dom'
 import omit from 'lodash/omit'
-import { fetchRenderSource } from "../utils/suspense";
+import { fetchRenderSource } from "@/utils/suspense";
 
-import { usePluginConfig } from "./PluginProvider";
-import { createElement } from "./web-component/createElement";
-import { WebComponentProps } from "./web-component/inteface";
-import { reactify } from "./web-component/reactify";
+import { usePluginConfig } from "@/components/plugin-provider/PluginProvider";
+import { createElement } from "@/components/web-component/createElement";
+import { WebComponentProps } from "@/components/web-component/inteface";
+import { reactify } from "@/components/web-component/reactify";
 import {
     CustomComponentNames,
     ReactifiedComponentRegistry,
-} from "./web-component/registry";
-import { errorBoundaryRegistery } from "./ErrorBoundary";
-import { isDevMode } from "../utils/isDevMode";
+} from "@/components/web-component/registry";
+import { errorBoundaryRegistery } from "@/components/ErrorBoundary";
+import { isDevMode } from "@/utils/isDevMode";
+import ErrorThrower from "../ErrorThrower";
 
 interface SlotResource {
     module: {
@@ -20,6 +21,9 @@ interface SlotResource {
             render?: (root: HTMLElement | ShadowRoot, props: any) => void;
             cssString?: string;
             useShadowDom?: boolean;
+            /**
+             * @deprecated
+             */
             Component?: React.ComponentType;
         };
     };
@@ -32,7 +36,7 @@ interface WCSlotRendererProps {
      * Custom resource wrapper to fetch the slot content and work with suspense
      */
     slotResource?: SlotResource | null;
-    children: React.ReactNode;
+    children?: React.ReactNode;
     /**
      * The tag name of the custom element
      */
@@ -40,10 +44,10 @@ interface WCSlotRendererProps {
     /**
      * Will be passed to the custom element as render props
      */
-    $props: { [key: string]: any };
+    $props?: { [key: string]: any };
 }
 
-const WebComponentRenderer: FC<WCSlotRendererProps & WebComponentProps> = ({
+export const WebComponentRenderer: FC<WCSlotRendererProps & WebComponentProps> = ({
     $props,
     slotResource,
     CustomElementName,
@@ -52,13 +56,12 @@ const WebComponentRenderer: FC<WCSlotRendererProps & WebComponentProps> = ({
 }) => {
     const wcRef = useRef<HTMLElement | null>(null);
 
-
     let CustomElementNameWithId: CustomComponentNames;
     if (slotResource) {
         let result;
-        if(errorBoundaryRegistery.get(CustomElementName)?.shouldRetry !== false) {
+        // if(errorBoundaryRegistery.get(CustomElementName)?.shouldRetry !== false) {
             result = slotResource.module.read();
-        } 
+        // } 
         if (result) {
             const wcUid = slotResource.uuid;
             const cssString = result.cssString;
@@ -114,13 +117,12 @@ const WebComponentRenderer: FC<WCSlotRendererProps & WebComponentProps> = ({
 
     return (
         <>      
-
             {hasWebComponent ? (
                  <WebComponent
                     $props={omit($props, ["className"])}
                     ref={wcRef}
                     {...rest}
-                    className={rest.className ?? $props.className}
+                    className={rest.className ?? $props?.className}
                 />
             ) : (
                 <>{children}</>
@@ -129,29 +131,29 @@ const WebComponentRenderer: FC<WCSlotRendererProps & WebComponentProps> = ({
     );
 };
 
-const WCSlotRenderer: FC<Omit<WCSlotRendererProps, 'slotResource'> & WebComponentProps> = (props) => {
+const ComponentRenderer: FC<Omit<WCSlotRendererProps, 'slotResource'> & WebComponentProps> = (props) => {
     const slotResource = useSlotResource(props.CustomElementName);
 
     return <WebComponentRenderer {...props} slotResource={slotResource} />
+    
 };
 
 function useSlotResource(pluginName: string) {
-    const scriptSrc = usePluginConfig({pluginName});
-    console.log(scriptSrc, 'scriptSrc')
+    const config = usePluginConfig({pluginName, pluginType: 'component'});
     const [resource, setResource] = useState<SlotResource | null>(null);
     useEffect(() => {
-        if (!scriptSrc) return;
+        if (!config) return;
         const getRenderer = async () => {
             const moduleResource = fetchRenderSource(
-                scriptSrc,
+                config.url,
             );
             setResource(moduleResource);
         };
         getRenderer();
-    }, [scriptSrc]);
+    }, [config]);
 
     return resource;
 };
 
 
-export default WCSlotRenderer;
+export default ComponentRenderer;

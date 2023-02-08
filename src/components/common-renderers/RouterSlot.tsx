@@ -1,8 +1,9 @@
 import React, { FC, useContext, Suspense, useRef, useEffect } from "react";
 import { Link, Route } from "react-router-dom";
-import { IframeRender } from "./IframeSlot";
-import RenderSlot from "./RenderSlot";
-import { pluginCtx } from "./ctx";
+import { IframeRender } from "@/components/base-renderers/IframeRenderer";
+import RenderSlot from "@/components/base-renderers/ComponentRenderer";
+import { pluginCtx } from "@/components/plugin-provider/ctx";
+import MountPoint from "../MountPoint";
 
 const RouterSlotLink: FC<any> = () => {
     const { routerConfig } = useContext(pluginCtx);
@@ -20,17 +21,7 @@ const RouterSlotLink: FC<any> = () => {
 
 const LazyComponents = {} as Record<string, any>;
 
-const MountPoint: FC<{ render: any }> = ({ render }) => {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    console.log(!!render, !!containerRef.current)
-      if (render && containerRef.current) {
-          render(containerRef.current);
-      }
-  });
 
-  return <div ref={containerRef} />;
-}
 
 const HTML_RE = /\.html/;
 

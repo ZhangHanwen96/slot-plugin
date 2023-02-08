@@ -11,11 +11,18 @@
         <script type="importmap">
             {
                 "imports": {
-                    "react": "https://esm.run/react@16",
-                    "react-dom": "https://esm.run/react-dom@16"
+                    "react": "https://cdn.skypack.dev/react@16",
+                    "react-dom": "https://cdn.skypack.dev/react-dom@16"
                 }
             }
         </script>
         <script src="/dist/index.js" type="module"></script>
+        <script type="module">
+            import react from "react";
+            const log = () => {
+                console.log(react);
+            };
+            eval(`console.log(react)`);
+        </script>
     </body>
 </html>

@@ -4,7 +4,7 @@ export default class Pubsub {
   
     constructor() {}
   
-    subscribe(event: string, callback: any) {
+    subscribe(event: string, callback: Callback) {
       if (!this._subscriptions[event]) {
         this._subscriptions[event] = [];
       }
