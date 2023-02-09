@@ -1,0 +1,56 @@
+import React, { useEffect } from "react";
+import {
+    useSlotResource,
+    WebComponentRenderer,
+} from "@/components/base-renderers/ComponentRenderer";
+import Suspense from "@/components/Suspense";
+import { usePluginConfig } from "@/components/plugin-provider/PluginProvider";
+
+const DefaultComponent = () => {
+    return (
+        <div
+            style={{ width: "100%", height: "100%", backgroundColor: "red" }}
+        />
+    );
+};
+
+const slotName = "slot-render-demo";
+
+const RenderSlot = () => {
+    const [count, setCount] = React.useState(0);
+    const slotResource = useSlotResource(slotName);
+
+    return (
+        <div>
+            <button onClick={() => setCount((pre) => pre + 1)}>Inc</button>
+            <div
+                style={{
+                    width: 300,
+                    height: 300,
+                }}
+            >
+                <Suspense fallback={<div>loading...</div>} name={slotName}>
+                    {Array.from({ length: 6 }).map((_, index) => (
+                        <WebComponentRenderer
+                            key={index}
+                            slotResource={slotResource}
+                            CustomElementName={slotName}
+                            $props={{ count, className: "heyheyhey" }}
+                            // rest props
+                            onClick={() => {
+                                console.log("click: hahhah");
+                            }}
+                            on-custom-event={(
+                                e: CustomEvent<{ count: number }>
+                            ) => console.log("custom event: ", e.detail.count)}
+                        >
+                            <DefaultComponent />
+                        </WebComponentRenderer>
+                    ))}
+                </Suspense>
+            </div>
+        </div>
+    );
+};
+
+export default RenderSlot;

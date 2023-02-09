@@ -5,8 +5,8 @@ const devConfig = {
     "slot-render-demo": `http://localhost:5173/src/slot-sdk/slots/dam-dev-entry.tsx?t=${crypto
         .randomUUID()
         .slice(0, 5)}`,
-    "slot-iframe-demo": "http://localhost:4173/",
-    "slot-pure-fn-demo": "http://localhost:5173/pureFn/pureFn.js",
+    // "slot-iframe-demo": "http://localhost:4173/",
+    // "slot-pure-fn-demo": "http://localhost:5173/pureFn/pureFn.js",
 };
 const cdnConfig = {
     "slot-render-demo":
@@ -36,6 +36,13 @@ const config: PluginConfig[] = [
         config: { url: cdnConfig['entry'], pluginType: 'function' },
     }
 ];
+
+const _devConfig: PluginConfig[] = [
+    {
+        pluginName: "slot-render-demo",
+        config: { url: devConfig["slot-render-demo"], pluginType: "component" },
+    },
+]
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export const fetchPluginConfig = async () => {

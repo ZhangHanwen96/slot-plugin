@@ -4,13 +4,13 @@ import Pubsub from "@/utils/store";
 declare global {
     interface Window {
         _plugin_hmr?: (pluginName: string) => void;
-        hmrPubsub?: Pubsub;
     }
 }
 
+export let hmrPubsub: Pubsub;
 const setupHMR = () => {
     if (window._plugin_hmr) return;
-    const hmrPubsub = new Pubsub();
+    hmrPubsub = new Pubsub();
     const update = (pluginName: string) => {
         console.log(pluginName, 'pluginName update')
         hmrPubsub.notify(pluginName, {
@@ -18,7 +18,6 @@ const setupHMR = () => {
         });
     };
     window._plugin_hmr = update;
-    window.hmrPubsub = hmrPubsub
 };
 
 if(isDevMode()) {

@@ -1,5 +1,4 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import {render} from 'react-dom'
 import omit from 'lodash/omit'
 import { fetchRenderSource } from "@/utils/suspense";
 
@@ -13,22 +12,8 @@ import {
 import { errorBoundaryRegistery } from "@/components/ErrorBoundary";
 import { isDevMode } from "@/utils/isDevMode";
 import ErrorThrower from "../ErrorThrower";
+import { SlotResource } from "@/interface";
 
-interface SlotResource {
-    module: {
-        read(): {
-            render?: (root: HTMLElement | ShadowRoot, props: any) => void;
-            cssString?: string;
-            useShadowDom?: boolean;
-            /**
-             * @deprecated
-             */
-            Component?: React.ComponentType;
-        };
-    };
-    url: string;
-    uuid?: string;
-}
 
 interface WCSlotRendererProps {
     /**
@@ -57,15 +42,12 @@ export const WebComponentRenderer: FC<WCSlotRendererProps & WebComponentProps> =
 
     let CustomElementNameWithId: string;
     if (slotResource) {
-        let result;
-        // if(errorBoundaryRegistery.get(CustomElementName)?.shouldRetry !== false) {
-            result = slotResource.module.read();
-        // } 
+        const result = slotResource.module.read();
         if (result) {
             const wcUid = slotResource.uuid;
             const cssString = result.cssString;
             let componentRenderer = result.render;
-            const ReactComponent = result.Component;
+            // const ReactComponent = result.Component;
 
             CustomElementNameWithId = wcUid && isDevMode()
                 ? (`${CustomElementName}-${wcUid}` as string)
@@ -78,11 +60,11 @@ export const WebComponentRenderer: FC<WCSlotRendererProps & WebComponentProps> =
                 !ReactifiedComponentRegistry[CustomElementNameWithId]
             ) {
                 // @ts-ignore
-                if(ReactComponent) {
-                  componentRenderer = (root, props) => {
-                    render(<ReactComponent {...props} />, root)
-                  }
-                }
+                // if(ReactComponent) {
+                //   componentRenderer = (root, props) => {
+                //     render(<ReactComponent {...props} />, root)
+                //   }
+                // }
                 // create and register web component
                 if(componentRenderer) {
                     const CustomPortalCard = createElement({
@@ -137,7 +119,7 @@ const ComponentRenderer: FC<Omit<WCSlotRendererProps, 'slotResource'> & WebCompo
     
 };
 
-function useSlotResource(pluginName: string) {
+export function useSlotResource(pluginName: string) {
     const config = usePluginConfig({pluginName, pluginType: 'component'});
     const [resource, setResource] = useState<SlotResource | null>(null);
     useEffect(() => {

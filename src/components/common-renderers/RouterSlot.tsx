@@ -11,7 +11,7 @@ const RouterSlotLink: FC<any> = () => {
     return (
         <>
             {configs.map(({ linkName, to }) => (
-                <li>
+                <li key={to}>
                     <Link to={to}>{linkName}</Link>
                 </li>
             ))}
@@ -20,8 +20,6 @@ const RouterSlotLink: FC<any> = () => {
 };
 
 const LazyComponents = {} as Record<string, any>;
-
-
 
 const HTML_RE = /\.html/;
 
@@ -33,18 +31,18 @@ export const RouterSlot: FC<any> & { Link: typeof RouterSlotLink } = () => {
     return (
         <>
             {/* @ts-ignore */}
-            {configs.map(({ url, to, Component, render }) => {
-                let LazyComp;
-                if (Component) {
-                    if (LazyComponents[to]) {
-                        LazyComp = LazyComponents[to];
-                    } else {
-                        LazyComp = LazyComponents[to] = React.lazy(Component);
-                    }
-                }
+            {configs.map(({ url, to, render }) => {
+                // let LazyComp;
+                // if (Component) {
+                //     if (LazyComponents[to]) {
+                //         LazyComp = LazyComponents[to];
+                //     } else {
+                //         LazyComp = LazyComponents[to] = React.lazy(Component);
+                //     }
+                // }
                 return (
                     <Route path={to} exact key={to}>
-                        {url && HTML_RE.test(url)  ? (
+                        {url && HTML_RE.test(url) ? (
                             <IframeRender
                                 style={{
                                     width: "100vw",
@@ -53,12 +51,9 @@ export const RouterSlot: FC<any> & { Link: typeof RouterSlotLink } = () => {
                                 iframeSrc={url}
                                 name={`slot-router-demo`}
                             />
-                        ) : LazyComp ? (
-                            // null
-                            <LazyComp />
-                        ) : (
+                        ) : render ? (
                             <MountPoint render={render} />
-                        )}
+                        ) : null}
                     </Route>
                 );
             })}

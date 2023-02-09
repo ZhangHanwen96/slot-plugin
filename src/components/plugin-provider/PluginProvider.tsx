@@ -4,9 +4,9 @@ import React, {
     useContext,
     useEffect,
     useMemo,
-    useRef,
     useState,
 } from "react";
+import {useLocation, matchPath} from 'react-router-dom';
 import { useMemoizedFn, useRequest } from "ahooks";
 import { pluginCtx, RouterConfig } from "./ctx";
 import Pubsub from "@/utils/store";
@@ -14,6 +14,7 @@ import { isDevMode } from "@/utils/isDevMode";
 import { fetchPluginConfig } from "@/api";
 import { PluginConfig, PluginType } from "@/interface";
 import "@/hmr";
+import { hmrPubsub } from "@/hmr";
 
 let inited = false;
 const PluginProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -29,6 +30,7 @@ const PluginProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
         config.find((c) => c.pluginName === name)
     );
 
+    // TODO: refactor this
     const addRouter = useCallback((config: RouterConfig) => {
         setRouterConfig((prev) => {
             return {
@@ -119,6 +121,21 @@ const PluginProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
     );
 };
 
+/**
+ * @description to controll whether plugin
+ */
+// export const useMatchPaths = (pathname: string | string[], exact = true) => {
+//     const {pathname: _pathname} = useLocation()
+//     const pathnames = Array.isArray(pathname) ? pathname : [pathname];
+//     return pathnames.some(path => {
+//         return matchPath(_pathname, {path, exact})
+//     });
+// }
+
+
+/**
+ * @description 在 pluginType=component 且render多个的情况下，建议抽离usePluginConfig到最上层
+ */
 export const usePluginConfig = ({
     pluginName,
     pluginType,
@@ -128,8 +145,6 @@ export const usePluginConfig = ({
 }) => {
     const { configStore } = useContext(pluginCtx);
     const [config, setConfig] = useState<PluginConfig["config"]>();
-    const configRef = useRef<PluginConfig["config"]>();
-    configRef.current = config;
 
     useEffect(() => {
         const _config = configStore.getConfig(pluginName);
@@ -138,10 +153,11 @@ export const usePluginConfig = ({
         let HmrUnsub = () => {};
         let configUnsub = () => {};
         const enableHmr = (config: PluginConfig["config"]) => {
-            if (isDevMode() && window.hmrPubsub) {
-                HmrUnsub = window.hmrPubsub.subscribe(pluginName, () => {
+            if (isDevMode() && hmrPubsub) {
+                HmrUnsub = hmrPubsub.subscribe(pluginName, () => {
                     const cleanUrl = config.url.replace(/\?.*$/, "");
                     const newUrl = cleanUrl + "?t=" + Date.now();
+                    // will force all slots to update
                     setConfig({
                         ...config,
                         url: newUrl,
@@ -168,9 +184,11 @@ export const usePluginConfig = ({
             configUnsub();
             HmrUnsub();
         };
-    }, [configStore, pluginType]);
+    }, [pluginType]);
 
     return config;
 };
+
+
 
 export default PluginProvider;

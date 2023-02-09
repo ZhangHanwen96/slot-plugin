@@ -7,3 +7,19 @@ export interface PluginConfig {
         pluginType: PluginType;
     }; 
 };
+
+export interface SlotResource {
+    module: {
+        read(): {
+            render?: (root: HTMLElement | ShadowRoot, props: any) => void;
+            cssString?: string;
+            useShadowDom?: boolean;
+            // /**
+            //  * @deprecated
+            //  */
+            // Component?: React.ComponentType;
+        };
+    };
+    url: string;
+    uuid?: string;
+}
