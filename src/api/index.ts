@@ -2,9 +2,7 @@ import { PluginConfig } from "@/interface";
 
 const devConfig = {
     // "slot-render-demo": `http://localhost:3000/renderers/renderer.mjs?t=${crypto.randomUUID().slice(0, 5)}`,
-    "slot-render-demo": `http://localhost:5173/src/slot-sdk/slots/dam-dev-entry.tsx?t=${crypto
-        .randomUUID()
-        .slice(0, 5)}`,
+    "slot-render-demo": `http://localhost:5173/src/slot-sdk/slots/dam-dev-entry.tsx`,
     // "slot-iframe-demo": "http://localhost:4173/",
     // "slot-pure-fn-demo": "http://localhost:5173/pureFn/pureFn.js",
 };

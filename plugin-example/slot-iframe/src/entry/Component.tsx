@@ -16,6 +16,6 @@ const App: React.FC = () => {
     return <div className='container'>我是demo rendssder</div>
 }
 
-render(<App/>, document.getElementById('root'))
+// render(<App/>, document.getElementById('root'))
 
 export default App;

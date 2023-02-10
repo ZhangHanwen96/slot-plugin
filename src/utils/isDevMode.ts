@@ -1,1 +1,1 @@
-export const isDevMode = () => import.meta.env.DEV;
+export const isDevMode = () => true;

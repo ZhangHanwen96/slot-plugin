@@ -93,9 +93,6 @@ export const WebComponentRenderer: FC<WCSlotRendererProps & WebComponentProps> =
         ReactifiedComponentRegistry[CustomElementNameWithId];
     const hasWebComponent = !!WebComponent;
 
-    console.log(hasWebComponent, "hasWebComponent");
- 
-
     return (
         <>      
             {hasWebComponent ? (

@@ -13,8 +13,8 @@ import Pubsub from "@/utils/store";
 import { isDevMode } from "@/utils/isDevMode";
 import { fetchPluginConfig } from "@/api";
 import { PluginConfig, PluginType } from "@/interface";
-import "@/hmr";
-import { hmrPubsub } from "@/hmr";
+import "@/utils/hmr";
+import { hmrPubsub, importReactRefreshFromLocalDevServer } from "@/utils/hmr";
 
 let inited = false;
 const PluginProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -89,24 +89,29 @@ const PluginProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
             return mixed ? [genConfig('component'), genConfig('function') ]  : genConfig(fixedPluginType)
         }).flat();
 
-
-        filteredData.forEach(({ config, pluginName }) => {
-            // handle pluginName='entry' differently
-            if (pluginName === "entry") {
-                const initEntry = async () => {
-                    if (inited) return;
-                    inited = true;
-                    const module = await import(config.url);
-                    if (typeof module.default === "function") {
-                        module.default({ addRouter });
-                    }
-                };
-                initEntry();
-            } else {
-                pubsub.notify(pluginName, config);
-            }
-        });
-        setConfig(filteredData as PluginConfig[]);
+        if(filteredData.length) {
+            filteredData.forEach(({ config, pluginName }) => {
+                // handle pluginName='entry' differently
+                if (pluginName === "entry") {
+                    const initEntry = async () => {
+                        if (inited) return;
+                        inited = true;
+                        const module = await import(config.url);
+                        if (typeof module.default === "function") {
+                            module.default({ addRouter });
+                        }
+                    };
+                    initEntry();
+                } else {
+                    pubsub.notify(pluginName, config);
+                }
+            });
+            // TODO: how to determine port?
+            importReactRefreshFromLocalDevServer(5173).then(() => {
+                setConfig(filteredData as PluginConfig[]);
+            })
+        }
+  
     }, [data]);
 
     return (

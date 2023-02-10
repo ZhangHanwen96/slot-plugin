@@ -1,14 +1,9 @@
 import { SlotResource } from "@/interface";
+import { dynamicImport } from "./dynamicImport";
 import { isDevMode } from "./isDevMode";
 
 const cleanUrl = (url: string) => url.replace(/(\?.*|#.*)/, '');
 
-/**
- * @description same as native import, used to suppress vite warning.
- */
-const dynamicImport = (src: string) => {
-  return Function('src', `"use strict"; return import(src);`)(src)
-}
 const maxCacheLimit = 100;
 let promiseMap: Map<string, SlotResource> | null = null;
 
@@ -57,10 +52,12 @@ export function wrapPromise<T = any>(promise: Promise<T>) {
     let result: T;
     let suspender = promise.then(
       r => {
+        console.log('success');
         status = "success";
         result = r;
       },
       e => {
+        console.log('error')
         status = "error";
         result = e;
       }

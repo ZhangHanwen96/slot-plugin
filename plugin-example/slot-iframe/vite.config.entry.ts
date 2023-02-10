@@ -21,15 +21,13 @@ const importCss =  (path: string): PluginOption => {
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [
-        react({
-            jsxRuntime: 'classic'
-        }),
+        react(),
         cssInject(),
         // importCss('')
     ],
     build: {
         lib: {
-            entry: "src/entry/Component.tsx",
+            entry: "src/entry/index.tsx",
             fileName: "index",
             formats: ["es"],
         },
@@ -39,11 +37,10 @@ export default defineConfig({
         },
         rollupOptions: {
             output: {
-                // manualChunks: splitVendorChunk(),
+                manualChunks: splitVendorChunk(),
                 assetFileNames: '[name]-[hash].[ext]',  
+                // chunkFileNames: '[name]-[hash].[ext]'
             },
-
-            external: ['react', 'react-dom']
         },
         emptyOutDir: true,
     },

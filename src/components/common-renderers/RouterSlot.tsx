@@ -19,7 +19,7 @@ const RouterSlotLink: FC<any> = () => {
     );
 };
 
-const LazyComponents = {} as Record<string, any>;
+// const LazyComponents = {} as Record<string, any>;
 
 const HTML_RE = /\.html/;
 
@@ -29,7 +29,7 @@ export const RouterSlot: FC<any> & { Link: typeof RouterSlotLink } = () => {
     const configs = Object.values(routerConfig);
 
     return (
-        <>
+        <Suspense fallback={<div> ..... loading .....</div>}>
             {/* @ts-ignore */}
             {configs.map(({ url, to, render }) => {
                 // let LazyComp;
@@ -41,26 +41,26 @@ export const RouterSlot: FC<any> & { Link: typeof RouterSlotLink } = () => {
                 //     }
                 // }
                 return (
-                    <Route path={to} exact key={to}>
-                        {url && HTML_RE.test(url) ? (
-                            <IframeRender
-                                style={{
-                                    width: "100vw",
-                                    height: "70vh",
-                                }}
-                                iframeSrc={url}
-                                name={`slot-router-demo`}
-                            />
-                        ) : render ? (
-                            <MountPoint render={render} />
-                        ) : null}
-                    </Route>
+                        <Route path={to} exact key={to}>
+                            {url && HTML_RE.test(url) ? (
+                                <IframeRender
+                                    style={{
+                                        width: "100vw",
+                                        height: "70vh",
+                                    }}
+                                    iframeSrc={url}
+                                    name={`slot-router-demo`}
+                                />
+                            ) : render ? (
+                                <MountPoint render={render} name={to} />
+                            ) : null}
+                        </Route>
                 );
             })}
             <Route path="/plugin*">
                 <div>No match plugin</div>
             </Route>
-        </>
+        </Suspense>
     );
 };
 

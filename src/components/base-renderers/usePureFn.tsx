@@ -1,6 +1,7 @@
-import React, { useEffect, useReducer, useRef } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import {useMemoizedFn} from 'ahooks'
 import { usePluginConfig } from "@/components/plugin-provider/PluginProvider";
+import { dynamicImport } from "@/utils/dynamicImport";
 
 export function usePureFnSlot<T extends any = void>(name: string): () => Promise<T> {
     const config = usePluginConfig({
@@ -23,7 +24,7 @@ export function usePureFnSlot<T extends any = void>(name: string): () => Promise
         const curCount = ++countRef.current;
         const loadPluginModule = async () => {
             try {
-                const { default: _default } = await import(config.url);
+                const { default: _default } = await dynamicImport(config.url);
                 if (curCount !== countRef.current) return;
                 if (typeof _default === "function") {
                     fnRef.current = _default;

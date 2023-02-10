@@ -4,7 +4,6 @@ import {
     WebComponentRenderer,
 } from "@/components/base-renderers/ComponentRenderer";
 import Suspense from "@/components/Suspense";
-import { usePluginConfig } from "@/components/plugin-provider/PluginProvider";
 
 const DefaultComponent = () => {
     return (

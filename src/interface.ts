@@ -8,6 +8,10 @@ export interface PluginConfig {
     }; 
 };
 
+export interface Resource<T> {
+    read(): T;
+}
+
 export interface SlotResource {
     module: {
         read(): {
